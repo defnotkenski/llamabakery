@@ -1,0 +1,140 @@
+# ----- PyCharm / IntelliJ -----
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# ----- OS cruft -----
+.DS_Store
+Thumbs.db
+
+# ----- Python basics -----
+__pycache__/
+*.py[cod]
+*$py.class
+
+# ----- Packaging / build -----
+.Python
+build/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+sdist/
+var/
+wheels/
+share/python-wheels/
+pip-wheel-metadata/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# ----- Virtual environments -----
+.venv/
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+.pyenv/
+.python-version
+
+# ----- Testing / coverage -----
+.coverage
+.coverage.*
+.cache
+.pytest_cache/
+.tox/
+.nox/
+htmlcov/
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+
+# ----- Type checkers / linters -----
+.mypy_cache/
+.pyre/
+.pytype/
+.ruff_cache/
+
+# ----- Jupyter / IPython -----
+.ipynb_checkpoints/
+.ipython/profile_default/history.sqlite
+*.nbconvert.ipynb
+
+# ----- Logs -----
+logs/
+*.log
+nohup.out
+
+# ----- ML / AI artifacts -----
+# Experiment folders
+runs/
+experiments/
+lightning_logs/
+mlruns/
+wandb/
+hydra/
+multirun/
+tensorboard/
+events.out.tfevents*
+
+# Models / checkpoints
+models/
+checkpoints/
+
+# Common weight formats
+*.ckpt
+*.pt
+*.pth
+*.bin
+*.safetensors
+*.onnx
+*.tflite
+*.h5
+*.gguf
+*.ggml
+*.npz
+*.npy
+
+# Datasets / outputs (tune to your repo)
+data/
+datasets/
+input/
+inputs/
+output/
+outputs/
+results/
+predictions/
+samples/
+
+# Caches (Torch, HF, etc.)
+.cache/
+.cache/torch/
+.cache/huggingface/
+huggingface/
+torch_cache/
+transformers_cache/
+sentence_transformers/
+nlp_cache/
+
+# ----- Compiled extensions / CUDA -----
+*.so
+*.pyd
+*.dylib
+*.dll
+*.cubin
+*.ptx
+
+# ----- Secrets / env files -----
+.env
+.env.*
+!.env.example
+.secrets/
+*.secret
+*.key
+*.pem

@@ -1,5 +1,4 @@
 from ollama import chat
-from ollama import ChatResponse
 
 
 def main() -> None:
@@ -10,8 +9,11 @@ def main() -> None:
         }
     ]
 
-    response: ChatResponse = chat(model="gemma3", messages=messages)
-    print(response.message.content)
+    stream_response = chat(model="gemma3", messages=messages, stream=True)
+
+    # print(response.message.content)
+    for chunk in stream_response:
+        print(chunk.message.content, end="", flush=True)
 
     return
 

@@ -1,11 +1,15 @@
 from ollama import chat
+import argparse
 
 
-def main() -> None:
+def main(msg: str | None) -> None:
+    if msg is None:
+        msg = "Why is the sky blue?"
+
     messages = [
         {
             "role": "user",
-            "content": "Why is the sky blue?",
+            "content": msg,
         }
     ]
 
@@ -20,4 +24,9 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    p = argparse.ArgumentParser(description="LlamaBakery entry script.")
+
+    p.add_argument("-m", "--message", required=False, help="Message to send to the LLM.")
+    args = p.parse_args()
+
+    main(msg=args.message)

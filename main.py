@@ -13,8 +13,9 @@ def main() -> None:
 
     # print(response.message.content)
     for chunk in stream_response:
-        print(chunk.message.content, end="\n", flush=True)
+        print(chunk.message.content, end="", flush=True)
 
+    print("")
     return
 
 

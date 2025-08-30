@@ -9,11 +9,11 @@ def main() -> None:
         }
     ]
 
-    stream_response = chat(model="gemma3", messages=messages, stream=True)
+    stream_response = chat(model="llama4:16x17b", messages=messages, stream=True)
 
     # print(response.message.content)
     for chunk in stream_response:
-        print(chunk.message.content, end="", flush=True)
+        print(chunk.message.content, end="\n", flush=True)
 
     return
 

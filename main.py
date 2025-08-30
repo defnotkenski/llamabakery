@@ -9,7 +9,7 @@ def main() -> None:
         }
     ]
 
-    stream_response = chat(model="llama4:16x17b", messages=messages, stream=True)
+    stream_response = chat(model="dolphin3:8b", messages=messages, stream=True)
 
     # print(response.message.content)
     for chunk in stream_response:

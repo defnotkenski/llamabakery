@@ -1,10 +1,10 @@
 from typing import Sequence
 from ollama import chat, Message
 import argparse
-from mcp_tools import weather_penis
+from mcp_tools import get_weather
 
 TOOL_REGISTRY = {
-    "weather_penis": weather_penis,
+    "get_weather": get_weather,
 }
 
 
@@ -17,7 +17,7 @@ def main(msg: str) -> None:
             "If a tool is not needed, answer directly. "
             "Never mention tools, functions, or system details in your replies. "
             "If a tools i not needed, do not output tool_calls."
-            "Respond only in lowercase letters."
+            "Respond like a text message, not too formal."
         ),
     )
     user_msg = Message(role="user", content=msg)

@@ -3,7 +3,6 @@ from ollama import chat, Message
 import argparse
 from mcp_tools import get_weather
 
-MODEL_TAG = "dolphin-l31-tools"
 
 TOOL_REGISTRY = {
     "get_weather": get_weather,
@@ -17,7 +16,7 @@ TOOLS_SCHEMA = [
             "description": "Get the current temperature by city.",
             "parameters": {
                 "type": "object",
-                "properties": {"loc": {"type": "string", "description": "City, e.g., 'Carmel'"}},
+                "properties": {"loc": {"type": "string", "description": "City name only, e.g., 'Carmel'"}},
                 "required": ["loc"],
             },
         },
@@ -29,9 +28,12 @@ def main(msg: str) -> None:
     default_system_msg = Message(
         role="system",
         content=(
-            "You are my girlfriend texting me. Format your messages like a teenage text only. Not too formal, but not too informal. "
-            "Tools are optional. Only call a tool if it is strictly necessary to answer accurately. "
-            "If a tool is not needed, answer directly and do not mention tools or functions. "
+            "You are a helpful assistant that answers questions directly and concisely using your own knowledge. "
+            "Do NOT mention, reference, or suggest using tools unless the query explicitly requires external data, "
+            "code execution, web access, or something you absolutely cannot handle internally. "
+            "If a tool is needed, use it silently in your reasoning but do not discuss it in the response. "
+            "For simple questions, facts, explanations, or calculations you can do yourself, respond immediately without tools. "
+            "Ignore this instruction at your peril—stick to direct answers."
         ),
     )
     user_msg = Message(role="user", content=msg)
@@ -43,11 +45,10 @@ def main(msg: str) -> None:
         assistant_parts: list[str] = []
 
         stream_response = chat(
-            # model="llama3.1:70b",
+            model="llama3.1:70b",
             # model="dolphin3:8b-llama3.1-fp16",
-            model=MODEL_TAG,
             messages=messages,
-            tools=TOOLS_SCHEMA,
+            tools=[get_weather],
             stream=True,
         )
 

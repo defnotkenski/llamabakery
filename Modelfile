@@ -2,7 +2,7 @@
 # To build a new Modelfile based on this, replace FROM with:
 # FROM llama3.1:70b
 
-FROM llama3.1:70b
+FROM dolphin3:8b-llama3.1-fp16
 TEMPLATE """{{- if or .System .Tools }}<|start_header_id|>system<|end_header_id|>
 {{- if .System }}
 

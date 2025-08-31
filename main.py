@@ -84,7 +84,6 @@ def main(msg: str) -> None:
 
         # Execute tools and send results back.
         print(f"TOOL CALL => {last_tool_calls}")
-        break
 
         for call in last_tool_calls:
             name = call.function.name

@@ -43,7 +43,7 @@ def main(msg: str) -> None:
             break  # no tools requested => done.
 
         # Execute tools and send results back.
-        # print(last_tool_calls)
+        print(f"TOOL CALL => {last_tool_calls}")
 
         for call in last_tool_calls:
             name = call.function.name

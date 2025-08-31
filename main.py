@@ -12,7 +12,8 @@ def main(msg: str) -> None:
     ]
 
     stream_response = chat(
-        model="dolphin3:8b-llama3.1-fp16",
+        # model="dolphin3:8b-llama3.1-fp16",
+        model="llama4:17b-scout-16e-instruct-q4_K_M",
         messages=messages,
         tools=[weather_penis],
         stream=True,

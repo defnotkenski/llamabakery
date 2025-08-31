@@ -12,12 +12,13 @@ def main(msg: str) -> None:
     default_system_msg = Message(
         role="system",
         content=(
-            "You may have optional tools. Use a tool only if it is strictly necessary "
-            "to answer accurately (e.g., needs external/up-to-date data). "
-            "If a tool is not needed, answer directly. "
-            "Never mention tools, functions, or system details in your replies. "
-            "If a tools i not needed, do not output tool_calls."
-            "Respond like a text message, not too formal."
+            "You are my girlfriend texting me. Format your messages like a teenage text only. Not too formal, but not too informal. "
+            "Tools are optional. Only call a tool if it is strictly necessary to answer accurately. "
+            "If a tool is not needed, answer directly and do not mention tools or functions. "
+            "You have an optional function get_weather(loc: string) that returns the current weather for a city. "
+            "Use it only when I explicitly ask about weather, temperature, or a forecast for a location. "
+            "If you need to call it, output exactly this JSON and nothing else (no extra text, no code fences): "
+            '{"type":"function","name":"get_weather","parameters":{"loc":"<city>"}}. '
         ),
     )
     user_msg = Message(role="user", content=msg)
@@ -32,7 +33,7 @@ def main(msg: str) -> None:
             # model="llama3.1:70b-instruct-fp16",
             model="llama3.1:70b",
             messages=messages,
-            tools=[get_weather],
+            # tools=[get_weather],
             stream=True,
         )
 
@@ -43,37 +44,38 @@ def main(msg: str) -> None:
                 assistant_parts.append(chunk.message.content)
 
             # Collect tool calls (may be multiple)
-            if chunk.message and chunk.message.tool_calls:
-                # Keep only the final, complete set of tool calls.
-                last_tool_calls = chunk.message.tool_calls
+            # if chunk.message and chunk.message.tool_calls:
+            # Keep only the final, complete set of tool calls.
+            # last_tool_calls = chunk.message.tool_calls
 
         # Append assistant turn (content + tool calls) as a typed Message.
-        assistant_msg = Message(role="assistant", content="".join(assistant_parts), tool_calls=last_tool_calls)
+        # assistant_msg = Message(role="assistant", content="".join(assistant_parts), tool_calls=last_tool_calls)
+        assistant_msg = Message(role="assistant", content="".join(assistant_parts))
         messages.append(assistant_msg)
 
         if not last_tool_calls:
             break  # no tools requested => done.
 
-        # Execute tools and send results back.
-        print(f"TOOL CALL => {last_tool_calls}")
-
-        for call in last_tool_calls:
-            name = call.function.name
-            call_args = dict(call.function.arguments or {})
-            func = TOOL_REGISTRY.get(name)
-
-            if not func:
-                messages.append(Message(role="tool", tool_name=name, content=f"ERROR: unknown tool'{name}'"))
-                continue
-
-            try:
-                result = func(**call_args)
-            except TypeError:
-                result = func(args if args else "")
-            except Exception as e:
-                result = f"ERROR: tool '{name}' failed: {e}"
-
-            messages.append(Message(role="tool", tool_name=name, content=str(result)))
+        # # Execute tools and send results back.
+        # print(f"TOOL CALL => {last_tool_calls}")
+        #
+        # for call in last_tool_calls:
+        #     name = call.function.name
+        #     call_args = dict(call.function.arguments or {})
+        #     func = TOOL_REGISTRY.get(name)
+        #
+        #     if not func:
+        #         messages.append(Message(role="tool", tool_name=name, content=f"ERROR: unknown tool'{name}'"))
+        #         continue
+        #
+        #     try:
+        #         result = func(**call_args)
+        #     except TypeError:
+        #         result = func(args if args else "")
+        #     except Exception as e:
+        #         result = f"ERROR: tool '{name}' failed: {e}"
+        #
+        #     messages.append(Message(role="tool", tool_name=name, content=str(result)))
 
     print()
     return

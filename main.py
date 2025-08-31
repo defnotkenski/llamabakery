@@ -38,7 +38,6 @@ def main(msg: str) -> None:
             # Collect tool calls (may be multiple)
             if chunk.message and chunk.message.tool_calls:
                 # Keep only the final, complete set of tool calls.
-                print(chunk.message.tool_calls)
                 last_tool_calls = chunk.message.tool_calls
 
         # Append assistant turn (content + tool calls) as a typed Message.

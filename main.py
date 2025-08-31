@@ -100,6 +100,7 @@ def main(msg: str) -> None:
         #     messages.append(Message(role="tool", tool_name=name, content=str(result)))
 
         if not tool_call:
+            print(f"DEBUG: No tool calls.")
             break  # no tools requested => done.
 
         # === Execute tool and append result ===

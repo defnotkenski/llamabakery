@@ -1,5 +1,6 @@
 import json
-from ollama import chat
+from typing import Sequence, Any
+from ollama import chat, Message
 import argparse
 from mcp_tools import weather_penis
 
@@ -20,10 +21,11 @@ def _parse_args(obj):
 
 
 def main(msg: str) -> None:
-    messages = [{"role": "user", "content": msg}]
+    messages: list[Any] = [{"role": "user", "content": msg}]
 
     while True:
-        pending_tool_calls = []
+        last_tool_calls: Sequence[Message.ToolCall] | None = None
+        assistant_parts: list[str] = []
 
         stream_response = chat(
             # model="dolphin3:8b-llama3.1-fp16",
@@ -37,39 +39,40 @@ def main(msg: str) -> None:
             # Print assistant text.
             if chunk.message and chunk.message.content:
                 print(chunk.message.content, end="", flush=True)
+                assistant_parts.append(chunk.message.content)
 
             # Collect tool calls (may be multiple)
             if chunk.message and chunk.message.tool_calls:
-                pending_tool_calls.append(chunk.message.tool_calls)
+                # Keep only the final, complete set of tool calls.
+                last_tool_calls = chunk.message.tool_calls
 
         print()
 
-        if not pending_tool_calls:
-            # No tool calls => assistant turn is complete; we're done.
-            break
+        # Append assistant turn (content + tool calls) as a typed Message.
+        assistant_msg = Message(role="assistant", content="".join(assistant_parts), tool_calls=last_tool_calls)
+        messages.append(assistant_msg)
 
-        # Execute tool calls and send results back as tool messages.
-        for call in pending_tool_calls:
-            fn = getattr(call, "function", None) or call.get("function", {})
-            name = getattr(fn, "name", None) or fn.get("name")
-            tool_args = getattr(fn, "arguments", None) or fn.get("arguments")
+        if not last_tool_calls:
+            break  # no tools requested => done
 
+        # Execute tools and send results back.
+        for call in last_tool_calls:
+            name = call.function.name
+            call_args = dict(call.function.arguments or {})
             func = TOOL_REGISTRY.get(name)
+
             if not func:
-                # Surface unknown tool gracefully.
-                messages.append({"role": "tool", "name": name or "unknown", "content": "ERROR: unknown tool"})
+                messages.append({"role": "tool", "tool_name": name, "content": f"ERROR: unknown tool'{name}'"})
                 continue
 
-            kwargs = _parse_args(tool_args)
-            # Call the tool and append the result.
             try:
-                result = func(**kwargs) if isinstance(kwargs, dict) else func(kwargs)
+                result = func(**call_args)
             except TypeError:
-                # Fallback if the tool expects a single positional arg
-                result = func(kwargs if kwargs else "")
+                result = func(args if args else "")
+            except Exception as e:
+                result = f"ERROR: tool '{name}' failed: {e}"
 
-            messages.append({"role": "tool", "name": name, "content": str(result)})
-
+            messages.append({"role": "tool", "tool_name": name, "content": str(result)})
     return
 
 

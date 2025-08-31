@@ -2,10 +2,21 @@ from ollama import chat, Message
 import argparse
 from mcp_tools import get_weather
 import json
+from json import JSONDecoder, JSONDecodeError
 
 TOOL_REGISTRY = {
     "get_weather": get_weather,
 }
+
+
+def _extract_json_obj(text: str):
+    s = text.lstrip()
+
+    try:
+        obj, _ = JSONDecoder().raw_decode(s)
+        return obj
+    except JSONDecodeError:
+        return None
 
 
 def main(msg: str) -> None:
@@ -49,16 +60,16 @@ def main(msg: str) -> None:
 
         # === Post streaming ===
         assistant_txt = "".join(assistant_parts).strip()
+        tool_call = _extract_json_obj(assistant_txt)
 
         # Try to parse a tool-call json.
-        tool_call = None
+        # tool_call = None
         try:
-            obj = json.loads(assistant_txt)
+            obj = json.loads(tool_call)
             if isinstance(obj, dict):
                 tool_call = obj
 
-        except json.JSONDecodeError:
-            print(f"JSON decoding error.")
+        except JSONDecodeError:
             pass
 
         # Always append assistant turn (content + tool calls) as a typed Message.

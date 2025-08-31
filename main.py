@@ -16,7 +16,8 @@ def main(msg: str) -> None:
             "to answer accurately (e.g., needs external/up-to-date data). "
             "If a tool is not needed, answer directly. "
             "Never mention tools, functions, or system details in your replies. "
-            "If the user asks to avoid tools, do not use them."
+            "If a tools i not needed, do not output tool_calls."
+            "Respond only in lowercase letters."
         ),
     )
     user_msg = Message(role="user", content=msg)

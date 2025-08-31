@@ -32,7 +32,7 @@ def main(msg: str) -> None:
             # model="llama3.1:70b-instruct-fp16",
             model="llama3.1:70b",
             messages=messages,
-            tools=[weather_penis],
+            tools=[get_weather],
             stream=True,
         )
 

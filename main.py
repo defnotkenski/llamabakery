@@ -38,15 +38,16 @@ def main(msg: str) -> None:
     )
     user_msg = Message(role="user", content=msg)
 
-    messages: list[Message] = [default_system_msg, user_msg]
+    messages: list[Message] = [user_msg]
 
     while True:
         last_tool_calls: Sequence[Message.ToolCall] | None = None
         assistant_parts: list[str] = []
 
         stream_response = chat(
-            model="llama3.1:70b",
+            # model="llama3.1:70b",
             # model="dolphin3:8b-llama3.1-fp16",
+            model="llamabakery3.1:70b",
             messages=messages,
             tools=[get_weather],
             stream=True,

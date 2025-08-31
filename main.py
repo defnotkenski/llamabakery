@@ -18,7 +18,7 @@ def main(msg: str) -> None:
             "You have an optional function get_weather(loc: string) that returns the current weather for a city. "
             "Use it only when I explicitly ask about weather, temperature, or a forecast for a location. "
             "If you need to call it, output exactly this JSON and nothing else (no extra text, no code fences): "
-            '{"type":"function","name":"get_weather","parameters":{"loc":"<city>"}}. '
+            '{"type":"function","name":"get_weather","parameters":{"loc":"<city_only>"}}'
         ),
     )
     user_msg = Message(role="user", content=msg)

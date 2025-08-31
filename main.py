@@ -40,6 +40,8 @@ def main(msg: str) -> None:
                 # Keep only the final, complete set of tool calls.
                 last_tool_calls = chunk.message.tool_calls
 
+        print(last_tool_calls)
+
         # Append assistant turn (content + tool calls) as a typed Message.
         assistant_msg = Message(role="assistant", content="".join(assistant_parts), tool_calls=last_tool_calls)
         messages.append(assistant_msg)

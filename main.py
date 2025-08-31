@@ -45,7 +45,8 @@ def main(msg: str) -> None:
         assistant_parts: list[str] = []
 
         stream_response = chat(
-            model="llama3.1:70b",
+            # model="llama3.1:70b",
+            model="dolphin3:8b-llama3.1-fp16",
             messages=messages,
             tools=TOOLS_SCHEMA,
             stream=True,

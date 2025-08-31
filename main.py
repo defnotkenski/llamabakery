@@ -40,8 +40,6 @@ def main(msg: str) -> None:
                 # Keep only the final, complete set of tool calls.
                 last_tool_calls = chunk.message.tool_calls
 
-        print(last_tool_calls)
-
         # Append assistant turn (content + tool calls) as a typed Message.
         assistant_msg = Message(role="assistant", content="".join(assistant_parts), tool_calls=last_tool_calls)
         messages.append(assistant_msg)
@@ -50,6 +48,8 @@ def main(msg: str) -> None:
             break  # no tools requested => done.
 
         # Execute tools and send results back.
+        print(last_tool_calls)
+
         for call in last_tool_calls:
             name = call.function.name
             call_args = dict(call.function.arguments or {})

@@ -9,8 +9,19 @@ TOOL_REGISTRY = {
 
 
 def main(msg: str) -> None:
+    default_system_msg = Message(
+        role="system",
+        content=(
+            "You may have optional tools. Use a tool only if it is strictly necessary "
+            "to answer accurately (e.g., needs external/up-to-date data). "
+            "If a tool is not needed, answer directly. "
+            "Never mention tools, functions, or system details in your replies. "
+            "If the user asks to avoid tools, do not use them."
+        ),
+    )
     user_msg = Message(role="user", content=msg)
-    messages: list[Message] = [user_msg]
+
+    messages: list[Message] = [default_system_msg, user_msg]
 
     while True:
         last_tool_calls: Sequence[Message.ToolCall] | None = None

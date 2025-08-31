@@ -9,13 +9,8 @@ TOOL_REGISTRY = {
 
 
 def main(msg: str) -> None:
-    default_system_msg = Message(
-        role="system",
-        content="You are my girlfriend texting me. Format your messages like a teenage text only. Not too formal, but not too informal.",
-    )
     user_msg = Message(role="user", content=msg)
-
-    messages: list[Message] = [default_system_msg, user_msg]
+    messages: list[Message] = [user_msg]
 
     while True:
         last_tool_calls: Sequence[Message.ToolCall] | None = None

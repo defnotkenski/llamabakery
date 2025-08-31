@@ -1,5 +1,4 @@
-import json
-from typing import Sequence, Any
+from typing import Sequence
 from ollama import chat, Message
 import argparse
 from mcp_tools import weather_penis
@@ -9,19 +8,8 @@ TOOL_REGISTRY = {
 }
 
 
-def _parse_args(obj):
-    # obj may be a dict or a JSON string; handle both.
-    if isinstance(obj, (dict, list)):
-        return obj
-
-    try:
-        return json.loads(obj or "{}")
-    except Exception:
-        return {}
-
-
 def main(msg: str) -> None:
-    messages: list[Any] = [{"role": "user", "content": msg}]
+    messages: list[Message] = [Message(role="user", content=msg)]
 
     while True:
         last_tool_calls: Sequence[Message.ToolCall] | None = None
@@ -47,8 +35,6 @@ def main(msg: str) -> None:
                 print(chunk.message.tool_calls)
                 last_tool_calls = chunk.message.tool_calls
 
-        print()
-
         # Append assistant turn (content + tool calls) as a typed Message.
         assistant_msg = Message(role="assistant", content="".join(assistant_parts), tool_calls=last_tool_calls)
         messages.append(assistant_msg)
@@ -63,7 +49,7 @@ def main(msg: str) -> None:
             func = TOOL_REGISTRY.get(name)
 
             if not func:
-                messages.append({"role": "tool", "tool_name": name, "content": f"ERROR: unknown tool'{name}'"})
+                messages.append(Message(role="tool", tool_name=name, content=f"ERROR: unknown tool'{name}'"))
                 continue
 
             try:
@@ -73,7 +59,9 @@ def main(msg: str) -> None:
             except Exception as e:
                 result = f"ERROR: tool '{name}' failed: {e}"
 
-            messages.append({"role": "tool", "tool_name": name, "content": str(result)})
+            messages.append(Message(role="tool", tool_name=name, content=str(result)))
+
+    print()
     return
 
 

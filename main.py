@@ -3,6 +3,8 @@ from ollama import chat, Message
 import argparse
 from mcp_tools import get_weather
 
+MODEL_TAG = "dolphin-l31-tools"
+
 TOOL_REGISTRY = {
     "get_weather": get_weather,
 }
@@ -42,7 +44,8 @@ def main(msg: str) -> None:
 
         stream_response = chat(
             # model="llama3.1:70b",
-            model="dolphin3:8b-llama3.1-fp16",
+            # model="dolphin3:8b-llama3.1-fp16",
+            model=MODEL_TAG,
             messages=messages,
             tools=TOOLS_SCHEMA,
             stream=True,
@@ -94,7 +97,7 @@ def main(msg: str) -> None:
             try:
                 result = func(**call_args)
             except TypeError:
-                result = func(args if args else "")
+                result = func(**call_args) if call_args else func("")
             except Exception as e:
                 result = f"ERROR: tool '{name}' failed: {e}"
 

@@ -65,6 +65,7 @@ def main(msg: str) -> None:
                 tool_call = obj
 
         except JSONDecodeError:
+            print(f"DEBUG: JSONDECODEError")
             pass
 
         # Always append assistant turn (content + tool calls) as a typed Message.
@@ -72,7 +73,7 @@ def main(msg: str) -> None:
         messages.append(assistant_msg)
 
         if not tool_call:
-            # print(f"DEBUG: No tool calls.")
+            print(f"DEBUG: No tool calls.")
             break  # no tools requested => done.
 
         # === Execute tool and append result ===

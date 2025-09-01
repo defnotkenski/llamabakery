@@ -72,10 +72,7 @@ def main(msg: str) -> None:
             pass
 
         if not tool_call:
-            print(f"DEBUG: No tool calls.")
             break  # no tools requested => done.
-
-        print(f"DEBUG: Tool call successfully parsed.")
 
         # === Execute tool and append result. ===
         tool_name = tool_call.get("tool")

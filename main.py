@@ -1,14 +1,11 @@
 from textwrap import dedent
-
 from ollama import chat, Message
 import argparse
-from mcp_tools import get_weather
+from mcp_tools import get_weather, schedule_event
 import json
 from json import JSONDecodeError
 
-TOOL_REGISTRY = {
-    "get_weather": get_weather,
-}
+TOOL_REGISTRY = {"get_weather": get_weather, "schedule_event": schedule_event}
 
 TOOLS_SCHEMA = [
     {
@@ -40,7 +37,9 @@ def main(msg: str) -> None:
         You are a helpful assistant. You can use tools by outputting a JSON object like {"tool": "tool_name", "args": {"param1": "value"}}
         Only do this if the query requires it; otherwise, respond directly.
         
-        Available tools: - get_weather: Fetches weather for a location. Args: {'location': 'city'}.
+        Available tools:
+        - get_weather: Fetches weather for a location. Args: {'location': 'city'}.
+        - schedule_event:  Schedules an event. Args: {"name": "event name", "time": "time"}.
         
         Answer in all lowercase letters.
         """

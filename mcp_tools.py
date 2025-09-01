@@ -1,3 +1,7 @@
+import csv
+from pathlib import Path
+
+
 def get_weather(loc: str) -> str:
     """
     Get the current temperature by city name.
@@ -13,3 +17,27 @@ def get_weather(loc: str) -> str:
     """
 
     return f"{loc}: 67F"
+
+
+def schedule_event(name: str, time: str) -> str:
+    """
+    Schedule an event.
+
+    Use only when the user explicitly mentions an event.
+    Otherwise, answer normally without mentioning or calling tools.
+
+    Args:
+      name (str): The name of the event. (e.g., "football practice")
+      time (str): Time of the event ending. (e.g., "4pm"
+
+    Returns:
+      str: Whether or not the tool was successful.
+    """
+    p = Path.cwd().joinpath("mock_db.csv")
+    row = {"event_name": name, "time": time}
+
+    with p.open("a", newline="") as f:
+        writer = csv.DictWriter(f, list(row.keys()))
+        writer.writerow(row)
+
+    return "success"

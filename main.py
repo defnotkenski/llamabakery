@@ -39,7 +39,7 @@ def main(msg: str) -> None:
         
         Available tools:
         - get_weather: Fetches weather for a location. Args: {'location': 'city'}.
-        - schedule_event:  Schedules an event. Args: {"name": "event name", "time": "time"}.
+        - schedule_event:  Remember an event. Args: {"name": "event name", "time": "time"}.
         
         Answer in all lowercase letters.
         """

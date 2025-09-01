@@ -21,7 +21,7 @@ def get_weather(loc: str) -> str:
 
 def schedule_event(name: str, time: str) -> str:
     """
-    Schedule an event.
+    Remember an event.
 
     Use only when the user explicitly mentions an event.
     Otherwise, answer normally without mentioning or calling tools.

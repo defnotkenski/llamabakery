@@ -28,7 +28,7 @@ def main(msg: str) -> None:
     default_system_msg = Message(
         role="system",
         content=(
-            "You are a helpful assistant. You can use tools by outputting a JSON object like {'tool': 'tool_name', 'args': {'param1': 'value'}}"
+            'You are a helpful assistant. You can use tools by outputting a JSON object like {"tool": "tool_name", "args": {"param1": "value"}}'
             "Only do this if the query requires it; otherwise, respond directly."
             "Available tools: - get_weather: Fetches weather for a location. Args: {'location': 'city'}."
             "Answer in all lowercase letters."
@@ -54,10 +54,14 @@ def main(msg: str) -> None:
                 print(chunk.message.content, end="", flush=True)
                 assistant_parts.append(chunk.message.content)
 
-        # === Post streaming ===
+        # === Post streaming. ===
         assistant_txt = "".join(assistant_parts).strip()
 
-        # Try to parse a tool-call json.
+        # === Always append assistant turn (content + tool calls) as a typed Message. ===
+        assistant_msg = Message(role="assistant", content=assistant_txt)
+        messages.append(assistant_msg)
+
+        # === Try to parse a tool-call json. ===
         tool_call = None
         try:
             obj = json.loads(assistant_txt)
@@ -65,18 +69,15 @@ def main(msg: str) -> None:
                 tool_call = obj
 
         except JSONDecodeError:
-            print(f"DEBUG: JSONDECODEError")
             pass
-
-        # Always append assistant turn (content + tool calls) as a typed Message.
-        assistant_msg = Message(role="assistant", content=assistant_txt)
-        messages.append(assistant_msg)
 
         if not tool_call:
             print(f"DEBUG: No tool calls.")
             break  # no tools requested => done.
 
-        # === Execute tool and append result ===
+        print(f"DEBUG: Tool call successfully parsed.")
+
+        # === Execute tool and append result. ===
         tool_name = tool_call.get("tool")
         tool_params = tool_call.get("args")
 

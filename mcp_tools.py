@@ -34,7 +34,7 @@ def schedule_event(name: str, time: str) -> str:
       str: Whether or not the tool was successful.
     """
     p = Path.cwd().joinpath("mock_db.csv")
-    row = {"event_name": name, "time": time}
+    row = {"name": name, "time": time}
 
     with p.open("a", newline="") as f:
         writer = csv.DictWriter(f, list(row.keys()))

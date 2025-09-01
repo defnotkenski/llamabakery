@@ -1,8 +1,8 @@
-from typing import Sequence
 from ollama import chat, Message
 import argparse
 from mcp_tools import get_weather
-
+import json
+from json import JSONDecodeError
 
 TOOL_REGISTRY = {
     "get_weather": get_weather,
@@ -39,14 +39,12 @@ def main(msg: str) -> None:
     messages: list[Message] = [default_system_msg, user_msg]
 
     while True:
-        last_tool_calls: Sequence[Message.ToolCall] | None = None
         assistant_parts: list[str] = []
 
         stream_response = chat(
             # model="llama3.1:70b",
             model="dolphin3:8b-llama3.1-fp16",
             messages=messages,
-            # tools=[get_weather],
             stream=True,
         )
 
@@ -56,72 +54,43 @@ def main(msg: str) -> None:
                 print(chunk.message.content, end="", flush=True)
                 assistant_parts.append(chunk.message.content)
 
-            # Collect tool calls (may be multiple)
-            if chunk.message and chunk.message.tool_calls:
-                # Keep only the final, complete set of tool calls.
-                last_tool_calls = chunk.message.tool_calls
-
         # === Post streaming ===
         assistant_txt = "".join(assistant_parts).strip()
 
         # Try to parse a tool-call json.
-        # tool_call = None
-        # try:
-        #     obj = json.loads(assistant_txt)
-        #     if isinstance(obj, dict):
-        #         tool_call = obj
-        #
-        # except JSONDecodeError:
-        #     pass
+        tool_call = None
+        try:
+            obj = json.loads(assistant_txt)
+            if isinstance(obj, dict):
+                tool_call = obj
+
+        except JSONDecodeError:
+            pass
 
         # Always append assistant turn (content + tool calls) as a typed Message.
-        assistant_msg = Message(role="assistant", content=assistant_txt, tool_calls=last_tool_calls)
+        assistant_msg = Message(role="assistant", content=assistant_txt)
         messages.append(assistant_msg)
 
-        if not last_tool_calls:
+        if not tool_call:
+            # print(f"DEBUG: No tool calls.")
             break  # no tools requested => done.
 
-        # Execute tools and send results back.
-        print(f"TOOL CALL => {last_tool_calls}")
+        # === Execute tool and append result ===
+        tool_name = tool_call.get("tool")
+        tool_params = tool_call.get("args")
 
-        for call in last_tool_calls:
-            name = call.function.name
-            call_args = dict(call.function.arguments or {})
-            func = TOOL_REGISTRY.get(name)
+        tool_func = TOOL_REGISTRY.get(tool_name)
+        assert tool_func, f"Unknown tool: {tool_name}"
 
-            if not func:
-                messages.append(Message(role="tool", tool_name=name, content=f"ERROR: unknown tool'{name}'"))
-                continue
+        try:
+            tool_result = tool_func(**tool_params)
+        except TypeError:
+            # Fallback for positional args.
+            tool_result = tool_func(tool_params.get("loc", ""))
+        except Exception as e:
+            tool_result = f"ERROR: tool {tool_name} failed: {e}"
 
-            try:
-                result = func(**call_args)
-            except TypeError:
-                result = func(**call_args) if call_args else func("")
-            except Exception as e:
-                result = f"ERROR: tool '{name}' failed: {e}"
-
-            messages.append(Message(role="tool", tool_name=name, content=str(result)))
-
-        # if not tool_call:
-        #     print(f"DEBUG: No tool calls.")
-        #     break  # no tools requested => done.
-        #
-        # # === Execute tool and append result ===
-        # tool_name = tool_call.get("name")
-        # tool_params = tool_call.get("parameters")
-        # tool_func = TOOL_REGISTRY.get(tool_name)
-        #
-        # assert tool_func, f"Unknown tool: {tool_name}"
-        #
-        # try:
-        #     tool_result = tool_func(**tool_params)
-        # except TypeError:
-        #     # Fallback for positional args.
-        #     tool_result = tool_func(tool_params.get("loc", ""))
-        # except Exception as e:
-        #     tool_result = f"ERROR: tool {tool_name} failed: {e}"
-        #
-        # messages.append(Message(role="tool", tool_name=tool_name, content=str(tool_result)))
+        messages.append(Message(role="tool", tool_name=tool_name, content=str(tool_result)))
 
     print()
     return

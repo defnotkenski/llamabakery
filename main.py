@@ -1,3 +1,5 @@
+from textwrap import dedent
+
 from ollama import chat, Message
 import argparse
 from mcp_tools import get_weather
@@ -27,12 +29,22 @@ TOOLS_SCHEMA = [
 def main(msg: str) -> None:
     default_system_msg = Message(
         role="system",
-        content=(
-            'You are a helpful assistant. You can use tools by outputting a JSON object like {"tool": "tool_name", "args": {"param1": "value"}}'
-            "Only do this if the query requires it; otherwise, respond directly."
-            "Available tools: - get_weather: Fetches weather for a location. Args: {'location': 'city'}."
-            "Answer in all lowercase letters."
-        ),
+        # content=(
+        #     'You are a helpful assistant. You can use tools by outputting a JSON object like {"tool": "tool_name", "args": {"param1": "value"}}'
+        #     "Only do this if the query requires it; otherwise, respond directly."
+        #     "Available tools: - get_weather: Fetches weather for a location. Args: {'location': 'city'}."
+        #     "Answer in all lowercase letters."
+        # ),
+        content=dedent(
+            """
+        You are a helpful assistant. You can use tools by outputting a JSON object like {"tool": "tool_name", "args": {"param1": "value"}}
+        Only do this if the query requires it; otherwise, respond directly.
+        
+        Available tools: - get_weather: Fetches weather for a location. Args: {'location': 'city'}.
+        
+        Answer in all lowercase letters.
+        """
+        ).strip(),
     )
     user_msg = Message(role="user", content=msg)
 
@@ -53,6 +65,8 @@ def main(msg: str) -> None:
             if chunk.message and chunk.message.content:
                 print(chunk.message.content, end="", flush=True)
                 assistant_parts.append(chunk.message.content)
+
+        print()  # Single newline after the final chunk for readability.
 
         # === Post streaming. ===
         assistant_txt = "".join(assistant_parts).strip()

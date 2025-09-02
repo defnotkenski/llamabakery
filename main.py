@@ -41,7 +41,8 @@ def main(msg: str) -> None:
 
         stream_response = chat(
             # model="llama3.1:70b",
-            model="dolphin3:8b-llama3.1-fp16",
+            # model="dolphin3:8b-llama3.1-fp16",
+            model="dolphin-llama3:70b-v2.9-fp16",
             messages=messages,
             stream=True,
         )

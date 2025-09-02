@@ -11,21 +11,26 @@ TOOL_REGISTRY = {"get_weather": get_weather, "remember_event": remember_event}
 def main(msg: str) -> None:
     default_system_msg = Message(
         role="system",
+        # content=dedent(
+        #     """
+        # You can use tools by outputting a JSON object like {"tool": "tool_name", "args": {"param1": "value"}}
+        # Only do this if the query requires it; otherwise, respond directly.
+        #
+        # Always scan the user's message for mentions of upcoming real-world events with a time (e.g., practice, game, meeting, class, appointment). If ANY such event is mentioned—even if it's not the main topic or the user is just venting—call the remember_event tool FIRST before responding to anything else. Extract the event name and time as best as you can. Examples:
+        # - User: "I have practice later at 4pm, I'm so nervous" → Call {"tool": "remember_event", "args": {"name": "practice", "time": "4pm"}}
+        # - User: "Meeting tomorrow at 10am, what should I prepare?" → Call {"tool": "remember_event", "args": {"name": "meeting", "time": "tomorrow at 10am"}}
+        # - User: "No events today" → Do not call.
+        #
+        # Available tools:
+        # - remember_event: If the user mentions any upcoming real-world event with a time (e.g., practice, game, meeting, class), call this tool.
+        # - Args: {"name": "event name", "time": "time"}.
+        #
+        # Answer like a text message, not too formal or informal.
+        # """
+        # ).strip(),
         content=dedent(
             """
-        You are a girlfriend texting your boyfriend. You can use tools by outputting a JSON object like {"tool": "tool_name", "args": {"param1": "value"}}
-        Only do this if the query requires it; otherwise, respond directly.
-        
-        Always scan the user's message for mentions of upcoming real-world events with a time (e.g., practice, game, meeting, class, appointment). If ANY such event is mentioned—even if it's not the main topic or the user is just venting—call the remember_event tool FIRST before responding to anything else. Extract the event name and time as best as you can. Examples:
-        - User: "I have practice later at 4pm, I'm so nervous" → Call {"tool": "remember_event", "args": {"name": "practice", "time": "4pm"}}
-        - User: "Meeting tomorrow at 10am, what should I prepare?" → Call {"tool": "remember_event", "args": {"name": "meeting", "time": "tomorrow at 10am"}}
-        - User: "No events today" → Do not call.
-        
-        Available tools:
-        - remember_event: If the user mentions any upcoming real-world event with a time (e.g., practice, game, meeting, class), call this tool.
-        - Args: {"name": "event name", "time": "time"}.
-        
-        Answer like a text message.
+        You are a girlfriend texting. Answer like a text message, not too formal or informal.
         """
         ).strip(),
     )
@@ -37,10 +42,11 @@ def main(msg: str) -> None:
         assistant_parts: list[str] = []
 
         stream_response = chat(
-            # model="llama3.1:70b",
-            model="dolphin3:8b-llama3.1-fp16",
+            model="llama3.1:70b",
+            # model="dolphin3:8b-llama3.1-fp16",
             messages=messages,
             stream=True,
+            tools=[remember_event],
         )
 
         for chunk in stream_response:

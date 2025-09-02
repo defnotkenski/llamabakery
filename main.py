@@ -19,7 +19,7 @@ def main(msg: str) -> None:
     )
     user_msg = Message(role="user", content=msg)
 
-    messages: list[Message] = [user_msg]
+    messages: list[Message] = [default_system_msg, user_msg]
 
     while True:
         toolcalls: Sequence[Message.ToolCall] | None = None

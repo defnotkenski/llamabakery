@@ -5,7 +5,7 @@ from mcp_tools import get_weather, remember_event
 import json
 from json import JSONDecodeError
 
-TOOL_REGISTRY = {"get_weather": get_weather, "remember_event": remember_event()}
+TOOL_REGISTRY = {"get_weather": get_weather, "remember_event": remember_event}
 
 TOOLS_SCHEMA = [
     {

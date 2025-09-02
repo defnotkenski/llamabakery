@@ -17,8 +17,10 @@ def main(msg: str) -> None:
         Only do this if the query requires it; otherwise, respond directly.
         
         Available tools:
-        - get_weather: Fetches weather for a location. Args: {'location': 'city'}.
-        - remember_event:  Remember an event (use when the user mentions an event with a time). Args: {"name": "event name", "time": "time"}.
+        - get_weather: Fetches weather for a location.
+        - Args: {'location': 'city'}.
+        - remember_event: Log an upcoming event so I can follow up when it ends. Trigger: whenever the user mentions a real event with a concrete time; if time is missing, ask one brief clarifying question, then call.
+        - Args: {"name": "event name", "time": "time"}.
         
         Answer in all lowercase letters.
         """

@@ -1,11 +1,8 @@
 from textwrap import dedent
 from typing import Sequence
-
 from ollama import chat, Message
 import argparse
 from mcp_tools import get_weather, remember_event
-import json
-from json import JSONDecodeError
 
 TOOL_REGISTRY = {"get_weather": get_weather, "remember_event": remember_event}
 
@@ -60,7 +57,7 @@ def main(msg: str) -> None:
             if chunk.message.tool_calls:
                 toolcalls = chunk.message.tool_calls
 
-        # print()  # Single newline after the final chunk for readability.
+        print()  # Single newline after the final chunk for readability.
 
         # === Post streaming. ===
         assistant_txt = "".join(assistant_parts).strip()
@@ -104,7 +101,6 @@ def main(msg: str) -> None:
         #
         # messages.append(Message(role="tool", tool_name=tool_name, content=str(tool_result)))
 
-    print()
     return
 
 

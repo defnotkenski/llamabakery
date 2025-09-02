@@ -34,6 +34,7 @@ def remember_event(name: str, time: str) -> str:
       str: Whether or not the tool was successful.
     """
     p = Path.cwd().joinpath("mock_db.csv")
+
     fields = ["name", "time"]
     row = {"name": name, "time": time}
 

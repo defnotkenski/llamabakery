@@ -7,31 +7,10 @@ from json import JSONDecodeError
 
 TOOL_REGISTRY = {"get_weather": get_weather, "remember_event": remember_event}
 
-TOOLS_SCHEMA = [
-    {
-        "type": "function",
-        "function": {
-            "name": "get_weather",
-            "description": "Get the current temperature by city.",
-            "parameters": {
-                "type": "object",
-                "properties": {"loc": {"type": "string", "description": "City name only, e.g., 'Carmel'"}},
-                "required": ["loc"],
-            },
-        },
-    }
-]
-
 
 def main(msg: str) -> None:
     default_system_msg = Message(
         role="system",
-        # content=(
-        #     'You are a helpful assistant. You can use tools by outputting a JSON object like {"tool": "tool_name", "args": {"param1": "value"}}'
-        #     "Only do this if the query requires it; otherwise, respond directly."
-        #     "Available tools: - get_weather: Fetches weather for a location. Args: {'location': 'city'}."
-        #     "Answer in all lowercase letters."
-        # ),
         content=dedent(
             """
         You are a helpful assistant. You can use tools by outputting a JSON object like {"tool": "tool_name", "args": {"param1": "value"}}

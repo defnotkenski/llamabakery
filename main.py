@@ -39,9 +39,9 @@ def main(msg: str) -> None:
     user_msg = Message(role="user", content=msg)
 
     messages: list[Message] = [default_system_msg, user_msg]
-    toolcalls: Sequence[Message.ToolCall] | None = None
 
     while True:
+        toolcalls: Sequence[Message.ToolCall] | None = None
         assistant_parts: list[str] = []
 
         stream_response = chat(

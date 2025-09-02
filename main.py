@@ -60,7 +60,7 @@ def main(msg: str) -> None:
             if chunk.message.tool_calls:
                 toolcalls = chunk.message.tool_calls
 
-        print()  # Single newline after the final chunk for readability.
+        # print()  # Single newline after the final chunk for readability.
 
         # === Post streaming. ===
         assistant_txt = "".join(assistant_parts).strip()

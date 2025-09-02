@@ -24,7 +24,6 @@ def remember_event(name: str, time: str) -> str:
     Remember an event.
 
     Use only when the user explicitly mentions an event.
-    Otherwise, answer normally without mentioning or calling tools.
 
     Args:
       name (str): The name of the event. (e.g., "football practice")

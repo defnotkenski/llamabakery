@@ -10,32 +10,22 @@ TOOL_REGISTRY = {"get_weather": get_weather, "remember_event": remember_event}
 def main(msg: str) -> None:
     default_system_msg = Message(
         role="system",
-        # content=dedent(
-        #     """
-        # You can use tools by outputting a JSON object like {"tool": "tool_name", "args": {"param1": "value"}}
-        # Only do this if the query requires it; otherwise, respond directly.
-        #
-        # Always scan the user's message for mentions of upcoming real-world events with a time (e.g., practice, game, meeting, class, appointment). If ANY such event is mentioned—even if it's not the main topic or the user is just venting—call the remember_event tool FIRST before responding to anything else. Extract the event name and time as best as you can. Examples:
-        # - User: "I have practice later at 4pm, I'm so nervous" → Call {"tool": "remember_event", "args": {"name": "practice", "time": "4pm"}}
-        # - User: "Meeting tomorrow at 10am, what should I prepare?" → Call {"tool": "remember_event", "args": {"name": "meeting", "time": "tomorrow at 10am"}}
-        # - User: "No events today" → Do not call.
-        #
-        # Available tools:
-        # - remember_event: If the user mentions any upcoming real-world event with a time (e.g., practice, game, meeting, class), call this tool.
-        # - Args: {"name": "event name", "time": "time"}.
-        #
-        # Answer like a text message, not too formal or informal.
-        # """
-        # ).strip(),
         content=dedent(
             """
-        You are a girlfriend texting. Answer like a text message, not too formal or informal.
+        Scan the user's text and determine if there's any real-world mentions of an event. 
+        You can use tools by outputting a JSON object like {"tool": "tool_name", "args": {"param1": "value"}}
+
+        Available tools:
+        - remember_event: If the user mentions any upcoming real-world event with a time (e.g., practice, game, meeting, class), call this tool.
+        - Args: {"name": "event name", "time": "time"}.
+
+        Answer like a text message, not too formal or informal.
         """
         ).strip(),
     )
     user_msg = Message(role="user", content=msg)
 
-    messages: list[Message] = [default_system_msg, user_msg]
+    messages: list[Message] = [user_msg]
 
     while True:
         toolcalls: Sequence[Message.ToolCall] | None = None

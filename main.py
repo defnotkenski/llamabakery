@@ -1,11 +1,11 @@
 from textwrap import dedent
 from ollama import chat, Message
 import argparse
-from mcp_tools import get_weather, schedule_event
+from mcp_tools import get_weather, remember_event
 import json
 from json import JSONDecodeError
 
-TOOL_REGISTRY = {"get_weather": get_weather, "schedule_event": schedule_event}
+TOOL_REGISTRY = {"get_weather": get_weather, "remember_event": remember_event()}
 
 TOOLS_SCHEMA = [
     {
@@ -38,8 +38,8 @@ def main(msg: str) -> None:
         Only do this if the query requires it; otherwise, respond directly.
         
         Available tools:
-        - get_weather: Fetches weather for a location. Args: {'location': 'city'}.
-        - schedule_event:  Remember an event. Args: {"name": "event name", "time": "time"}.
+        - get_weather: Fetches weather for a location. Args: {'location': 'city name only'}.
+        - remember_event:  Remember an event. Args: {"name": "event name", "time": "time"}.
         
         Answer in all lowercase letters.
         """

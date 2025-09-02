@@ -19,7 +19,7 @@ def get_weather(loc: str) -> str:
     return f"{loc}: 67F"
 
 
-def schedule_event(name: str, time: str) -> str:
+def remember_event(name: str, time: str) -> str:
     """
     Remember an event.
 
@@ -34,10 +34,11 @@ def schedule_event(name: str, time: str) -> str:
       str: Whether or not the tool was successful.
     """
     p = Path.cwd().joinpath("mock_db.csv")
+    fields = ["name", "time"]
     row = {"name": name, "time": time}
 
     with p.open("a", newline="") as f:
-        writer = csv.DictWriter(f, list(row.keys()))
+        writer = csv.DictWriter(f, fieldnames=fields)
         writer.writerow(row)
 
     return "success"

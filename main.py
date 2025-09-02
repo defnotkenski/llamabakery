@@ -19,7 +19,7 @@ def main(msg: str) -> None:
         Available tools:
         - get_weather: Fetches weather for a location.
         - Args: {'location': 'city'}.
-        - remember_event: Whenever the user mentions a real event with a concrete time; if time is missing, ask one brief clarifying question, then call.
+        - remember_event: If the user mentions any upcoming real-world event with a time (e.g., practice, game, meeting, class), call this tool.
         - Args: {"name": "event name", "time": "time"}.
         
         Answer in all lowercase letters.
